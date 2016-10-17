@@ -1,23 +1,26 @@
 #!/bin/bash
-#wget \
-#https://access.cdn.redhat.com//content/origin/files/sha256/3e/3e36464d712c338e09db43e9983d8864641c8387530d7527bf6b1a47413689dc/cfme-rhos-5.6.1.2-1.x86_64.qcow2?_auth_=1472546742_af36f10a3f47a96ffd6bc5199bf3f08b \
-#-o cfme-rhos-5.6.1..x86_64.qcow2
-#mv cfme-rhos-5.6.1.2-1* cfme-rhos-5.6.1.x86_64.qcow2
-#qemu-img convert -O raw cfme-rhos-5.6.1.x86_64.qcow2 myimage-temp.raw
-#VMDKstream.py myimage-temp.raw myimage-for-aws.vmdk
-#mv myimage-for-aws.vmdk cfme-rhos-5.6.1.x86_64.vmdk
-#mv cfme-rhos-5.6.1.x86_64.vmdk cloudforms/
-#rm -fr myimage-temp.raw
-#cd cloudforms/
-export VMDK_IMAGE=/root/cloudforms/cfme-rhos-5.6.1.x86_64.vmdk
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-1.b14.el7_2.x86_64/jre
-export AWS_S3_BUCKET=cloudforms-ami
-export AWS_SECRET_KEY=
+mkdir -p /usr/local/ec/
+mkdir cloudforms/
+unzip ec2-api-tools.zip
+mv ec2-api-tools-1.7.5.1 /usr/local/ec/
+mv cfme-ec2-5.6.2.1-1.x86_64.vhd cfme-rhos-5.6.1.x86_64.qcow2
+yum install qemu-img -y
+yum install java-1.8.0-openjdk-1.8.0.102 -y
+qemu-img convert -O raw cfme-rhos-5.6.1.x86_64.qcow2 myimage-temp.raw
+./VMDKstream.py myimage-temp.raw myimage-for-aws.vmdk
+mv myimage-for-aws.vmdk cfme-rhos-5.6.1.x86_64.vmdk
+mv cfme-rhos-5.6.1.x86_64.vmdk cloudforms/
+rm -fr myimage-temp.raw
+cd cloudforms/
+export VMDK_IMAGE=/root/cloudforms/cloudform-AWS-appliance/cloudforms/cfme-rhos-5.6.1.x86_64.vmdk
+export JAVA_HOME=/usr/lib/jvm/jre-1.8.0/
+export AWS_S3_BUCKET=cloudforms-ami-macbank
 export AWS_ACCESS_KEY=
-export EC2_HOME=/usr/local/ec/ec2-api-tools-1.7.5.1
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-1.b14.el7_2.x86_64/jre
-cd /usr/local/ec/ec2-api-tools-1.7.5.1/bin/
-systemctl status ntpd
+export AWS_SECRET_KEY=
+export EC2_HOME=/usr/local/ec
+export JAVA_HOME=/usr/lib/jvm/jre-1.8.0/
+export export PATH=$PATH:$EC2_HOME
+systemct lstatus ntpd
 systemctl start ntpd
 systemctl status ntpd
 systemctl restart ntpd
